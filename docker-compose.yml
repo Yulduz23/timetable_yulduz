@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: yulduz-db
+    environment:
+      POSTGRES_USER: student
+      POSTGRES_PASSWORD: student_pass
+      POSTGRES_DB: Yulduz
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db_init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: yulduz-flask-app
+    depends_on:
+      - db
+    ports:
+      - "8080:5000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=Yulduz
+      - DB_USER=student
+      - DB_PASS=student_pass
+    volumes:
+      - .:/app
+
+volumes:
+  db_data:
